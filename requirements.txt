@@ -1,0 +1,6 @@
+PySide2
+pyopengl==3.1.5
+numpy==1.19.4
+pyserial==3.5
+pyqtgraph==0.11.0
+json-fix==1.0.0
