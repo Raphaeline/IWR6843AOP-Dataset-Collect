@@ -1,0 +1,4 @@
+
+
+D:/Tugas Akhir/Programs/Applications_Visualizer/chirpConfigs/AOP_6m_default.cfg
+False
