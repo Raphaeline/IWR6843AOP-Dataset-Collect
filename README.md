@@ -4,11 +4,6 @@
     <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" style="vertical-align:middle">
 </p>
 
-<h1>Disclaimer</h1>
-<p>
-    This program is intended solely for academic purposes as part of a student final project. Any other use, reproduction, or distribution of this program beyond its stated purpose is strictly prohibited. The author assumes no responsibility for any consequences arising from its use outside the intended scope.
-</p>
-
 <h1>Dataset Structure</h1>
 
 <p> The dataset is formatted in the form of a CSV file, with data contents.</p>
@@ -59,3 +54,8 @@ or
 ```
     python3 main.py
 ```
+
+<h1>Disclaimer</h1>
+<p>
+    This program is intended solely for academic purposes as part of a student final project. Any other use, reproduction, or distribution of this program beyond its stated purpose is strictly prohibited. The author assumes no responsibility for any consequences arising from its use outside the intended scope.
+</p>

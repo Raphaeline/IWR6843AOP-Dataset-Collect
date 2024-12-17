@@ -27,7 +27,7 @@ from Demo_Classes.Helper_Classes.fall_detection import *
 from graph_utilities import get_trackColors, eulerRot
 from gl_text import GLTextItem
 
-from gui_threads import updateQTTargetThread3D
+from common.gui_threads import updateQTTargetThread3D
 from gui_common import TAG_HISTORY_LEN
 
 import logging

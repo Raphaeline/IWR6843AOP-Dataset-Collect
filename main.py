@@ -8,34 +8,22 @@ if common_path not in sys.path:
     sys.path.insert(0, common_path)
 
 
-
-from demo_defines import *
-
-from gui_core import Window
+# PySide2 Imports
 from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt
 
-
-
-
-# add common folder to path
-# sys.path.insert(1, os.path.abspath(os.getcwd()) + "\\tools\\visualizers\\Applications_Visualizer\\common") # Uncomment for debug in VSCode or running from Applications_Visualizer dir
-# sys.path.insert(1, '../common')
-
-
-# PySide2 Imports
-
 # Window Class
+from gui_core import Window
 
 # Demo List
+from common.demo_defines import *
 
 # Logging (possible levels: DEBUG, INFO, WARNING, ERROR, CRITICAL)
 
 # Uncomment this line for logging with timestamps
-# logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d:%H:%M:%S', level=logging.INFO)
 
-logging.basicConfig(
-    format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.INFO)
+# logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 if __name__ == '__main__':

@@ -15,7 +15,7 @@ import logging
 log = logging.getLogger(__name__)
 
 # Classifier Configurables
-MAX_NUM_TRACKS = 20 # This could vary depending on the configuration file. Use 20 here as a safe likely maximum to ensure there's enough memory for the classifier
+MAX_NUM_TRACKS = 20  # This could vary depending on the configuration file. Use 20 here as a safe likely maximum to ensure there's enough memory for the classifier
 
 # Expected minimums and maximums to bound the range of colors used for coloring points
 SNR_EXPECTED_MIN = 5
@@ -25,66 +25,68 @@ DOPPLER_EXPECTED_MIN = -30
 DOPPLER_EXPECTED_MAX = 30
 DOPPLER_EXPECTED_RANGE = DOPPLER_EXPECTED_MAX - DOPPLER_EXPECTED_MIN
 
-# Different methods to color the points 
+# Different methods to color the points
 COLOR_MODE_SNR = 'SNR'
 COLOR_MODE_HEIGHT = 'Height'
 COLOR_MODE_DOPPLER = 'Doppler'
 COLOR_MODE_TRACK = 'Associated Track'
 
 # Magic Numbers for Target Index TLV
-TRACK_INDEX_WEAK_SNR = 253 # Point not associated, SNR too weak
-TRACK_INDEX_BOUNDS = 254 # Point not associated, located outside boundary of interest
-TRACK_INDEX_NOISE = 255 # Point not associated, considered as noise
+TRACK_INDEX_WEAK_SNR = 253  # Point not associated, SNR too weak
+TRACK_INDEX_BOUNDS = 254  # Point not associated, located outside boundary of interest
+TRACK_INDEX_NOISE = 255  # Point not associated, considered as noise
 
 
 class parseUartThread(QThread):
     fin = Signal(dict)
 
     def __init__(self, uParser):
-            QThread.__init__(self)
-            self.parser = uParser
-            
-            self.timestamp = time.strftime("%m%d%Y%H%M%S")
-            self.outputDir = f'./dataset/{self.timestamp}'
-            # Ensure the directory is created only once
-            os.makedirs(self.outputDir, exist_ok=True)
+        QThread.__init__(self)
+        self.parser = uParser
 
-    
+        self.timestamp = time.strftime("%m%d%Y%H%M%S")
+        self.outputDir = f'./dataset/{self.timestamp}'
+        # Ensure the directory is created only once
+        os.makedirs(self.outputDir, exist_ok=True)
 
     def run(self):
-            if self.parser.parserType == "SingleCOMPort":
-                outputDict = self.parser.readAndParseUartSingleCOMPort()
-            else:
-                outputDict = self.parser.readAndParseUartDoubleCOMPort()
+        if self.parser.parserType == "SingleCOMPort":
+            outputDict = self.parser.readAndParseUartSingleCOMPort()
+        else:
+            outputDict = self.parser.readAndParseUartDoubleCOMPort()
 
-            self.fin.emit(outputDict)
+        self.fin.emit(outputDict)
 
-            # Akses saveBinary melalui self.parser
-            if self.parser.saveBinary == 1:
-                # Simpan data ke JSON dan CSV
-                frameJSON = {'frameData': outputDict, 'timestamp': time.time() * 1000}
-                self.parser.frames.append(frameJSON)
-                csvFilePath = f'{self.outputDir}/dataset.csv'
+        # Akses saveBinary melalui self.parser
+        if self.parser.saveBinary == 1:
+            # Simpan data ke JSON dan CSV
+            frameJSON = {'frameData': outputDict,
+                         'timestamp': time.time() * 1000}
+            self.parser.frames.append(frameJSON)
+            csvFilePath = f'{self.outputDir}/dataset.csv'
 
-                # Simpan CSV
-                self.parser.saveDataToCsv(csvFilePath, frameJSON)
+            # Simpan CSV
+            self.parser.saveDataToCsv(csvFilePath, frameJSON)
+
+    def stop(self):
+        self.terminate()
 
     def stop(self):
         self.terminate()
 
 
-    def stop(self):
-        self.terminate()
 class sendCommandThread(QThread):
     done = Signal()
+
     def __init__(self, uParser, command):
-            QThread.__init__(self)
-            self.parser = uParser
-            self.command = command
+        QThread.__init__(self)
+        self.parser = uParser
+        self.command = command
 
     def run(self):
         self.parser.sendLine(self.command)
         self.done.emit()
+
 
 class updateQTTargetThread3D(QThread):
     done = Signal()
@@ -95,7 +97,7 @@ class updateQTTargetThread3D(QThread):
         self.targets = targets
         self.scatter = scatter
         self.pcplot = pcplot
-        self.colorArray = ('r','g','b','w')
+        self.colorArray = ('r', 'g', 'b', 'w')
         self.numTargets = numTargets
         self.ellipsoids = ellipsoids
         self.coordStr = coords
@@ -107,7 +109,7 @@ class updateQTTargetThread3D(QThread):
         self.trackColorMap = trackColorMap
         self.pointBounds = pointBounds
         # This ignores divide by 0 errors when calculating the log2
-        np.seterr(divide = 'ignore')
+        np.seterr(divide='ignore')
 
     def drawTrack(self, track, trackColor):
         # Get necessary track data
@@ -117,27 +119,28 @@ class updateQTTargetThread3D(QThread):
         z = track[3]
 
         track = self.ellipsoids[tid]
-        mesh = getBoxLinesCoords(x,y,z)
-        track.setData(pos=mesh,color=trackColor,width=2,antialias=True,mode='lines')
+        mesh = getBoxLinesCoords(x, y, z)
+        track.setData(pos=mesh, color=trackColor, width=2,
+                      antialias=True, mode='lines')
         track.setVisible(True)
 
     # Return transparent color if pointBounds is enabled and point is outside pointBounds
-    # Otherwise, color the point depending on which color mode we are in    
+    # Otherwise, color the point depending on which color mode we are in
     def getPointColors(self, i):
-        if (self.pointBounds['enabled']) :
-            xyz_coords = self.pointCloud[i,0:3]
-            if (   xyz_coords[0] < self.pointBounds['minX']
-                or xyz_coords[0] > self.pointBounds['maxX']
-                or xyz_coords[1] < self.pointBounds['minY']
-                or xyz_coords[1] > self.pointBounds['maxY']
-                or xyz_coords[2] < self.pointBounds['minZ']
-                or xyz_coords[2] > self.pointBounds['maxZ']
-                ) :
-                return pg.glColor((0,0,0,0))
+        if (self.pointBounds['enabled']):
+            xyz_coords = self.pointCloud[i, 0:3]
+            if (xyz_coords[0] < self.pointBounds['minX']
+                        or xyz_coords[0] > self.pointBounds['maxX']
+                        or xyz_coords[1] < self.pointBounds['minY']
+                        or xyz_coords[1] > self.pointBounds['maxY']
+                        or xyz_coords[2] < self.pointBounds['minZ']
+                        or xyz_coords[2] > self.pointBounds['maxZ']
+                    ) :
+                return pg.glColor((0, 0, 0, 0))
 
         # Color the points by their SNR
         if (self.pointColorMode == COLOR_MODE_SNR):
-            snr = self.pointCloud[i,4]
+            snr = self.pointCloud[i, 4]
             # SNR value is out of expected bounds, make it white
             if (snr < SNR_EXPECTED_MIN) or (snr > SNR_EXPECTED_MAX):
                 return pg.glColor('w')
@@ -152,19 +155,19 @@ class updateQTTargetThread3D(QThread):
             if (zs < self.zRange[0]) or (zs > self.zRange[1]):
                 return pg.glColor('w')
             else:
-                colorRange = self.zRange[1]+abs(self.zRange[0]) 
-                zs = self.zRange[1] - zs 
+                colorRange = self.zRange[1]+abs(self.zRange[0])
+                zs = self.zRange[1] - zs
                 return pg.glColor(self.colorGradient.getColor(abs(zs/colorRange)))
 
         # Color Points by their doppler
-        elif(self.pointColorMode == COLOR_MODE_DOPPLER):
-            doppler = self.pointCloud[i,3]
+        elif (self.pointColorMode == COLOR_MODE_DOPPLER):
+            doppler = self.pointCloud[i, 3]
             # Doppler value is out of expected bounds, make it white
             if (doppler < DOPPLER_EXPECTED_MIN) or (doppler > DOPPLER_EXPECTED_MAX):
                 return pg.glColor('w')
             else:
                 return pg.glColor(self.colorGradient.getColor((doppler-DOPPLER_EXPECTED_MIN)/DOPPLER_EXPECTED_RANGE))
-                
+
         # Color the points by their associate track
         elif (self.pointColorMode == COLOR_MODE_TRACK):
             trackIndex = int(self.pointCloud[i, 6])
@@ -185,19 +188,25 @@ class updateQTTargetThread3D(QThread):
 
     def run(self):
 
+        # if self.pointCloud is None or len(self.pointCloud) == 0:
+        #     print("Point Cloud is empty or None.")
+        # else:
+        #     print("Point Cloud Shape:", self.pointCloud.shape)
+
         # Clear all previous targets
         for e in self.ellipsoids:
             if (e.visible()):
                 e.hide()
         try:
             # Create a list of just X, Y, Z values to be plotted
-            if(self.pointCloud is not None):
+            if (self.pointCloud is not None):
                 toPlot = self.pointCloud[:, 0:3]
+                # print("Data for Visualization:", toPlot)
 
                 # Determine the size of each point based on its SNR
                 with np.errstate(divide='ignore'):
                     size = np.log2(self.pointCloud[:, 4])
-                
+
                 # Each color is an array of 4 values, so we need an numPoints*4 size 2d array to hold these values
                 pointColors = np.zeros((self.pointCloud.shape[0], 4))
 
@@ -207,13 +216,21 @@ class updateQTTargetThread3D(QThread):
 
                 # Plot the points
                 self.scatter.setData(pos=toPlot, color=pointColors, size=size)
-                # Make the points visible 
+                # Debugging
+                # print("Pos Data for Visualization:", toPlot)
+                # print("Color Data for Visualization:", pointColors)
+                # print("Size Data for Visualization:", size)
+
+                # Make the points visible
                 self.scatter.setVisible(True)
             else:
                 # Make the points invisible if none are detected.
                 self.scatter.setVisible(False)
-        except:
-            log.error("Unable to draw point cloud, ignoring and continuing execution...")
+        except Exception as e:
+            log.error(
+                "Unable to draw point cloud, ignoring and continuing execution...")
+            print("Unable to draw point cloud, ignoring and continuing execution...")
+            print(f"Error in point cloud visualization: {e}")
 
         # Graph the targets
         try:
@@ -222,12 +239,13 @@ class updateQTTargetThread3D(QThread):
                     for track in self.targets:
                         trackID = int(track[0])
                         trackColor = self.trackColorMap[trackID]
-                        self.drawTrack(track,trackColor)
+                        self.drawTrack(track, trackColor)
         except:
-            log.error("Unable to draw all tracks, ignoring and continuing execution...")
-
+            log.error(
+                "Unable to draw all tracks, ignoring and continuing execution...")
+            print("Unable to draw point cloud, ignoring and continuing execution...")
+            print(f"Error in point cloud visualization: {e}")
         self.done.emit()
 
     def stop(self):
         self.terminate()
-

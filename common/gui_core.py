@@ -31,7 +31,7 @@ from PySide2.QtWidgets import (
 # Local Imports
 from cached_data import CachedDataType
 from demo_defines import *
-from gui_threads import *
+from common.gui_threads import *
 from parseFrame import parseStandardFrame
 
 from Common_Tabs.plot_1d import Plot1D

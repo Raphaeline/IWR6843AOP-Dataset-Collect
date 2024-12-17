@@ -349,18 +349,18 @@ class UARTParser():
 
     def saveDataToCsv(self, csvFilePath, frameData):
 
-            with open(csvFilePath, mode='a', newline='') as csvFile:  # Append mode
-                writer = csv.writer(csvFile)
+        with open(csvFilePath, mode='a', newline='') as csvFile:  # Append mode
+            writer = csv.writer(csvFile)
 
-                # Write header if the file is empty
-                if csvFile.tell() == 0:
-                    writer.writerow(['timestamp', 'numDetectedPoints', 'x', 'y', 'z', 'intensity', 'angle'])
+            # Write header if the file is empty
+            if csvFile.tell() == 0:
+                writer.writerow(['timestamp', 'numFrame', 'x', 'y', 'z', 'doppler', 'intensity'])
 
-                timestamp = frameData.get('timestamp', None)
-                numDetectedPoints = frameData['frameData'].get('numDetectedPoints', 0)
-                pointCloud = frameData['frameData'].get('pointCloud', [])
+            timestamp = frameData.get('timestamp', None)
+            frameNum = frameData['frameData'].get('frameNum', 0)
+            pointCloud = frameData['frameData'].get('pointCloud', [])
 
-                # Write each point to the CSV
-                for idx, point in enumerate(pointCloud, start=1):
-                    x, y, z, angle, intensity, _, angleValue = point
-                    writer.writerow([timestamp, idx, x, y, z, intensity, angleValue])
+            # Write each point to the CSV
+            for idx, point in enumerate(pointCloud, start=1):
+                x, y, z, doppler, intensity, _, _ = point
+                writer.writerow([timestamp, idx, x, y, z, doppler, intensity])
